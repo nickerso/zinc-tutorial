@@ -76,17 +76,23 @@
 								</div>
 								<h3>onZincReady</h3>
 								<p>The zinc plugin provides a callback event which is triggered once the zinc plugin has completed its initialisation. This allows you to trigger the initialisation of your own web page once the zinc plugin is ready for use. The code sample below demonstrates this.</p>
-<pre class="brush: js; html-script: true; highlight: [11];">&lt;!DOCTYPE HTML>
+<pre class="brush: js; html-script: true; highlight: [9,10,11,12,17];">&lt;!DOCTYPE HTML>
 &lt;html lang="en">
 	&lt;head>
 		&lt;meta charset="utf-8">
 		&lt;title>Demo: Hello Zinc&lt;/title>
 		&lt;link rel="stylesheet" href="style.css" media="screen">
 		&lt;link rel="stylesheet" href="http://dojotoolkit.org/documentation/tutorials/1.7/resources/style/demo.css" media="screen">
+		&lt;script type="text/javascript">
+			function zincPluginReady() {
+            	// the zinc plugin is ready, so we can start using it.
+                alert("The zinc plugin is now ready to go!");
+            }
+		&lt;/script>
 	&lt;/head>
 	&lt;body>
 		&lt;h1>Demo: Hello Zinc&lt;/h1>
-		&lt;object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 500px; height: 600px;">&lt;/object>
+		&lt;object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 500px; height: 600px;"  onzincready="zincPluginReady()">&lt;/object>
 	&lt;/body>
 &lt;/html></pre>
 							<a class="demoBtn demo" href="demo/demo-onZincReady.html">View Demo</a>
