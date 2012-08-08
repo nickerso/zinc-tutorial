@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Hello Zinc - The Zinc Plugin</title>
+		
+		
+		<!-- This will all be replaced on the live site -->
+		<link rel="stylesheet" href="http://dojotoolkit.org/css/site.css" type="text/css" media="all" />
+		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="http://dojotoolkit.org/documentation/tutorials/1.7/resources/style/style.css" media="screen">
+		<link href="http://alexgorbatchev.com/pub/sh/current/styles/shCoreDefault.css" rel="stylesheet" type="text/css" />
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCss.js" type="text/javascript"></script>
+		<!-- Don't add anything here. This will be replaced on the live site. -->
+		<script>
+			dojo.ready(function(){
+				SyntaxHighlighter.all();
+			});
+		</script>
+	</head>
+	<body class="claro">
+		<div id="page" class="docPage">
+			<div id="header">
+    			<div class="container">
+        			<span id="logo"><a href="http://dojotoolkit.org" title="Homepage"><img src="http://dojotoolkit.org/images/logo.png" alt="Dojo Toolkit" /></a></span>
+    			</div>
+			</div>
+			<div id="main">
+				<div id="content" class="innerBox">
+					<div class="pageTitleContainer">
+						<h1>Documentation</h1>
+						<ul class="subnav">
+							<li><a href="http://dojotoolkit.org/documentation/"><span>Tutorials</span></a></li>
+							<li><a href="http://dojotoolkit.org/reference-guide/"><span>Reference Guide</span></a></li>
+							<li><a href="http://dojotoolkit.org/api/"><span>API Documentation</span></a></li>
+						</ul>
+					</div>
+					<div style="clear:left;" >
+						<div class="container" style="margin-bottom:50px; width:960px">
+							<div class="unit size2of3 firstUnit">
+								<!-- BEGIN YOUR TUTORIAL HERE -->
+								<div class="tutIntro">
+									<img src="images/preview.jpg" class="tut_preview" /><!-- Feel free to use youw own 200x200 image. Must be royalty free or similar license -->
+									<div class="introContainer">
+										<h2>Hello Zinc</h2>
+										<p class="summary">Welcome to the Zinc Plugin. In this tutorial you will learn how to add a zinc scene viewer to your web page. You will also learn about some of the core javascript functions provided by the zinc plugin which allow you to interact with zinc.</p>
+										<ul>
+											<li><span>Difficulty:</span> Beginner <!-- Beginner/Intermediate/Expert --></li>
+											<li><span>Zinc Plugin Version:</span> 0.7 <!-- The _single_ version of dojo this is being written for. --></li>
+										</ul>
+									</div>
+								</div>
+								<h3>Getting Started</h3>
+								<p>Adding a zinc scene viewer to your web page is straight forward. All you need to do is position and size an <code>&lt;object&gt;</code> element where you'd like the scene viewer in your page layout with the zinc plugin type specified. <strong>Below is an example code sample.</strong></p>
+<!-- Only set html-script to true if you actually have HTML and JS mixed. Also you must indent this way or else things get really whacky. -->
+<pre class="brush: js; html-script: true; highlight: [11];">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+	&lt;head>
+		&lt;meta charset="utf-8">
+		&lt;title>Demo: Hello Zinc&lt;/title>
+		&lt;link rel="stylesheet" href="style.css" media="screen">
+		&lt;link rel="stylesheet" href="http://dojotoolkit.org/documentation/tutorials/1.7/resources/style/demo.css" media="screen">
+	&lt;/head>
+	&lt;body>
+		&lt;h1>Demo: Hello Zinc&lt;/h1>
+		&lt;object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 500px; height: 600px;">&lt;/object>
+	&lt;/body>
+&lt;/html></pre>
+								<p>The above code adds a default zinc scene viewer to an otherwise empty page. As you can see in the demo page below, the default scene viewer has a black background. We give the <code>&lt;object&gt;</code> the <code>id</code> <code>zincPlugin</code> in order to be able to communicate with the zinc plugin instance with future javascript code.</p>
+								<a class="demoBtn demo" href="demo/demo.html">View Demo</a>
+								<div class="proTip">
+									Use this class for asides and other callouts.
+								</div>
+								<h3>onZincReady</h3>
+								<p>The zinc plugin provides a callback event which is triggered once the zinc plugin has completed its initialisation. This allows you to trigger the initialisation of your own web page once the zinc plugin is ready for use. The code sample below demonstrates this.</p>
+<pre class="brush: js; html-script: true; highlight: [11];">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+	&lt;head>
+		&lt;meta charset="utf-8">
+		&lt;title>Demo: Hello Zinc&lt;/title>
+		&lt;link rel="stylesheet" href="style.css" media="screen">
+		&lt;link rel="stylesheet" href="http://dojotoolkit.org/documentation/tutorials/1.7/resources/style/demo.css" media="screen">
+	&lt;/head>
+	&lt;body>
+		&lt;h1>Demo: Hello Zinc&lt;/h1>
+		&lt;object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 500px; height: 600px;">&lt;/object>
+	&lt;/body>
+&lt;/html></pre>
+							<a class="demoBtn demo" href="demo/demo-onZincReady.html">View Demo</a>
+
+							<p>The zinc plugin provides several callback event methods that are generally used to indicate that certain tasks are completed. These are explained in later tutorials.</p>
+							
+							<h3>What else to talk about?</h3>
+							
+							<ul>
+								<li>any other events/callbacks that can be used with the object?</li>
+								<li><code>&lt;object&gt;</code> versus <code>&lt;embed&gt;</code>?</li>
+								<li>Why do the zinc examples always have that z-layer text stuff in them?</li>
+							</ul>
+
+							<h3>Conclusion</h3>
+							<p>And now you know how to put the zinc plugin into your page :)</p>
+						</div>
+						<div class="sidebar unit size1of3">
+							<div class="container">
+								<div class="sidebarSection">
+									<h4>About the Author</h4>
+									<div class="authorInfo">
+										<img src="images/avatar.jpg" class="avatar" />
+										<p>
+											Andre is awesome at the <a href="http://www.abi.auckland.ac.nz">The Auckland Bioengineering Institute</a>
+											<!-- Your avatar should be 100x100. Keep your bio to a couple of lines and provide a link to your website -->
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br style="clear:both;" />
+		<div id="main">
+			<div id="content" class="innerBox">
+				<div id="foot">
+					<div class="innerBox">
+						<span class="redundant">&copy;</span> <a href="http://dojofoundation.org">The Dojo Foundation</a>, All Rights Reserved.&nbsp;&nbsp;&nbsp;<a href="http://dojotoolkit.org/license/">License Information</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
