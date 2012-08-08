@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>YOUR TUTORIAL - The Dojo Toolkit</title>
+		<title>The Download Manager - The Zinc Plugin</title>
 		
 		
 		<!-- This will all be replaced on the live site -->
@@ -45,96 +45,78 @@
 								<div class="tutIntro">
 									<img src="images/preview.jpg" class="tut_preview" /><!-- Feel free to use youw own 200x200 image. Must be royalty free or similar license -->
 									<div class="introContainer">
-										<h2>Your Tutorial Title</h2>
-										<p class="summary">Required. This is the teaser about what the user is going to learn in this tutorial. This summary is automatically pulled into the Dojo Toolkit documentation page index.</p>
+										<h2>Loading data into zinc with the Download Manager</h2>
+										<p class="summary">Required. In this tutorial you will learn how to load data into the zinc plugin by using the download manager.</p>
 										<ul>
 											<li><span>Difficulty:</span> Beginner <!-- Beginner/Intermediate/Expert --></li>
-											<li><span>Dojo Version:</span> 1.6 <!-- The _single_ version of dojo this is being written for. --></li>
+											<li><span>Zinc Plugin Version:</span> 0.7 <!-- The _single_ version of dojo this is being written for. --></li>
 										</ul>
 									</div>
 								</div>
 								<h3>Getting Started</h3>
-								<p>Give some background here explaining why what the user is going to learn is important. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia. <strong>Below is an example code sample.</strong></p>
+								<p>Give some background here explaining why what the user is going to learn is important.</p>
+								<p>The following code sample shows the <code>zincPluginReady()</code> callback function expanded to include the definition of a node and element file to load into zinc. A download manger is created and tasked with loading those two files into memory.</p>
 <!-- Only set html-script to true if you actually have HTML and JS mixed. Also you must indent this way or else things get really whacky. -->
-<pre class="brush: js; html-script: true;">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-	&lt;meta charset=&quot;utf-8&quot;&gt;
-	&lt;title&gt;Tutorial: Hello Dojo!&lt;/title&gt;
-	&lt;!-- load Dojo --&gt;
-	&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js&quot;&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-	&lt;h1 id=&quot;greeting&quot;&gt;Hello&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
+<pre class="brush: js; html-script: false;">function zincPluginReady() {
+	// the zinc plugin is ready, so we can start using it.
+	console.log("The zinc plugin is now ready to go!");
+	// grab a handle to the plugin object
+	var plugin = document.getElementById("zincPlugin");
+	/* create a download manager for reading input files */
+	var downloadManager = plugin.createDownloadManager();
+	/* add in URIs for downloadManager to read files from.
+		In this case files from the local directories. Each item stores
+		a block of memory for each file. */
+	var nodesItem = downloadManager.addURI("../resources/cube.exnode");
+	var elementsItem = downloadManager.addURI("../resources/cube.exelem");
+	/* add in a completion callback function once the download manager has 
+		 finish downloading and put the files into memory. In this case,
+		 the function returned by the getCubeDownloadCompleteFunction() will
+		 be called once download is finished. We wrap the callback function this
+		 way to provide scope to the arguments of the callback function.
+		 */
+	downloadManager.addCompletionCallback(
+		getCubeDownloadCompleteFunction(plugin, nodesItem, elementsItem));
+}</pre>
+	<p>In the following code sample, we define a function which returns the callback function used as the completion callback in the sample above. This approach is used to preserve the scope of the arguments to the function.</p>
+<pre class="brush: js; html-script: false;">function getCubeDownloadCompleteFunction(pluginIn, nodesItemIn, elementsItemIn) {
+	console.log("getting the cube download complete callback function.");
+	var zincPlugin = pluginIn;
+	var nodesItem = nodesItemIn;
+	var elementsItem = elementsItemIn;
+
+	// this is the actual function that will be called upon completion of the downloads
+	return function() {
+		// get a handle to the default root region
+		var rootRegion = zincPlugin.context.getDefaultRegion();
+		// create a stream information object which will be used to define the data to read 
+		var streamInformation = rootRegion.createStreamInformation();
+		// and add the node and element items to the stream information
+		streamInformation.createResourceDownloadItem(nodesItem);
+		streamInformation.createResourceDownloadItem(elementsItem);
+		// Now we can load the mesh from the memory stream.
+		rootRegion.read(streamInformation);
+		
+		// if successful we should now be able to get the cube region just loaded.
+		var cubeRegion = rootRegion.findSubregionAtPath("cube");
+		if (cubeRegion) {
+			alert("The cube region successfully loaded with");
+			// FIXME: is there a better way to check for success?
+		} else {
+			alert("Something went horribly wrong loading the cube region?");
+		}
+	}
+}</pre>
 								<p>Code samples are great but we want to show them that the code example actually works, so that's where the view demo button comes in. Note, it's ok to have a few code samples strung together that lead up to a single demo.</p>
 								<a class="demoBtn demo" href="demo/demo.html">View Demo</a>
 
 								<p>Explain to the user what the above code does when run and why it does it. While your demo should be well documented it's nice to be able to read the author's view of what the demo does. For example, this code sample has this description after it:</p>
-								<p>This is as vanilla as it gets. We've put the Dojo script tag into the <code>&lt;head&gt;</code> — it could also have gone at the end of the <code>&lt;body&gt;</code> — with a src attribute indicating the URL where the dojo.js file is located.</p>
-								<p>For this tutorial we are going to load the Dojo Toolkit via the Google CDN. If you have downloaded a Dojo release, adjust the URL to point to the location of dojo.js on your own server. Assuming the URL is correct, Dojo is now loaded quietly in the background. Next we need somewhere to put code that runs when Dojo is ready, so we can do something with it.</p>
-								<div class="proTip">
-									Use this class for asides and other callouts.
-								</div>
-								<h3>Section Heading</h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia.</p>
-								
-<pre class="brush: js; html-script: true;">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-	&lt;meta charset=&quot;utf-8&quot;&gt;
-	&lt;title&gt;Tutorial: Hello Dojo!&lt;/title&gt;
-	&lt;!-- load Dojo --&gt;
-	&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js&quot;&gt;&lt;/script&gt;
-	&lt;script&gt;
-		dojo.ready(function(){
-			alert(&quot;Dojo version &quot; + dojo.version + &quot; is loaded&quot;);
-		});
-	&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-	&lt;h1 id=&quot;greeting&quot;&gt;Hello&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
-							<a class="demoBtn demo" href="demo/demo.html">View Demo</a>
-
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia.</p>
-
-<pre class="brush: js; html-script: true; highlight: [10]">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-	&lt;meta charset=&quot;utf-8&quot;&gt;
-	&lt;title&gt;Tutorial: Hello Dojo!&lt;/title&gt;
-	&lt;!-- load Dojo --&gt;
-	&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js&quot;&gt;&lt;/script&gt;
-	&lt;script&gt;
-		dojo.ready(function(){
-			dojo.byId(&quot;greeting&quot;).innerHTML += &quot;, from &quot; + dojo.version;
-		});
-	&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-	&lt;h1 id=&quot;greeting&quot;&gt;Hello&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
-
-							<a class="demoBtn demo" href="demo/demo.html">View Demo</a>
-
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia.</p>
-
-<pre class="brush: js; html-script: false;">function init() {
-	alert(&quot;Dojo ready, version:&quot; + dojo.version);
-	// More initialization here
-}
-dojo.ready(init);
-</pre>
-
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod.</p>
-
-							<h3>Section Heading</h3>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia.</p>
-
+								<h3>What else to show?</h3>
+								<ul>
+									<li>other callback methods?</li>
+									<li>better way to check that things work?</li>
+									<li>talk about any restirctions on where the data can come from?</li>
+								</ul>
 							<h3>Conclusion</h3>
 							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia.</p>
 						</div>
@@ -145,7 +127,7 @@ dojo.ready(init);
 									<div class="authorInfo">
 										<img src="images/avatar.jpg" class="avatar" />
 										<p>
-											Torrey Rice is a Dojo committer and Creative Director at <a href="http://www.sitepen.com">SitePen, Inc.</a>
+											Andre is awesome at the <a href="http://www.abi.auckland.ac.nz">The Auckland Bioengineering Institute</a>
 											<!-- Your avatar should be 100x100. Keep your bio to a couple of lines and provide a link to your website -->
 										</p>
 									</div>
