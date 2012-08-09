@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Demo: Download Manager</title>
+		<title>Demo: Basic Graphics</title>
 		<link rel="stylesheet" href="style.css" media="screen">
 		<link rel="stylesheet" href="http://dojotoolkit.org/documentation/tutorials/1.7/resources/style/demo.css" media="screen">
 		<script type="text/javascript">
@@ -50,8 +50,29 @@
 					// if successful we should now be able to get the cube region just loaded.
 					var cubeRegion = rootRegion.findSubregionAtPath("cube");
 					if (cubeRegion) {
-						alert("The cube region successfully loaded with");
 						// FIXME: is there a better way to check for success?
+						console.log("found the cube region");
+						// do some basic set-up of the scene viewer. 
+						var sceneViewer = zincPlugin.sceneViewer;
+						sceneViewer.setBackgroundColourRGB(1.0, 1.0, 1.0);
+						sceneViewer.antialiasMode = 4;
+						// Now we get a handle to the default graphics module for this zinc context 
+						var graphicsModule = zincPlugin.context.getDefaultGraphicsModule();
+						// and the rendition object for the cube's region 
+						var cubeRendition = graphicsModule.getRendition(cubeRegion);
+						// and define standard materials for the graphics module 
+						graphicsModule.defineStandardMaterials();
+						// Now we are able to layout the scene we want to view in the scene viewer
+						cubeRendition.beginChange(); // FIXME: cache changes to improve performance?
+						// API for the rendition object is still lacking, so we make use of the type-specific
+						// execute command method.
+						cubeRendition.executeCommand("general clear default_coordinate coordinates");
+						cubeRendition.executeCommand("cylinders constant_radius 0.05 material green");
+						cubeRendition.executeCommand("node glyph sphere size '0.15*0.15*0.15' material blue");
+						// finished making changes to the rendition, so end the caching and execute the changes.
+						cubeRendition.endChange();
+						// reset the scene to ensure all visible graphics are shown.
+						sceneViewer.viewAll();
 					} else {
 						alert("Something went horribly wrong loading the cube region?");
 					}
@@ -60,7 +81,7 @@
 		</script>
 	</head>
 	<body>
-		<h1>Demo: Download Manager</h1>
-		<object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 250px; height: 300px;" onzincready="zincPluginReady()"></object>
+		<h1>Demo: Basic Graphics</h1>
+		<object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 400px; height: 400px; border:5px solid red;" onzincready="zincPluginReady()"></object>
 	</body>
 </html>

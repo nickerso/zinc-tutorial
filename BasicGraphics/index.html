@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>The Download Manager - The Zinc Plugin</title>
+		<title>Introduction to graphics - The Zinc Plugin</title>
 		
 		
 		<!-- This will all be replaced on the live site -->
@@ -45,8 +45,8 @@
 								<div class="tutIntro">
 									<img src="images/preview.jpg" class="tut_preview" /><!-- Feel free to use youw own 200x200 image. Must be royalty free or similar license -->
 									<div class="introContainer">
-										<h2>Loading data into zinc with the Download Manager</h2>
-										<p class="summary">Required. In this tutorial you will learn how to load data into the zinc plugin by using the download manager.</p>
+										<h2>Introduction to graphics</h2>
+										<p class="summary">Required. In this tutorial you will be introduced to the rendition object and learn how to use it to display some primitive graphics.</p>
 										<ul>
 											<li><span>Difficulty:</span> Beginner <!-- Beginner/Intermediate/Expert --></li>
 											<li><span>Zinc Plugin Version:</span> 0.7 <!-- The _single_ version of dojo this is being written for. --></li>
@@ -55,72 +55,47 @@
 								</div>
 								<h3>Getting Started</h3>
 								<p>Give some background here explaining why what the user is going to learn is important.</p>
-								<p>The following code sample shows the <code>zincPluginReady()</code> callback function expanded to include the definition of a node and element file to load into zinc. A download manger is created and tasked with loading those two files into memory.</p>
+								<p>Taken the download manager tutorial and added this code to draw the cube's lines as green cylinders and nodes as blue spheres.</p>
 <!-- Only set html-script to true if you actually have HTML and JS mixed. Also you must indent this way or else things get really whacky. -->
-<pre class="brush: js; html-script: false;">function zincPluginReady() {
-	// the zinc plugin is ready, so we can start using it.
-	console.log("The zinc plugin is now ready to go!");
-	// grab a handle to the plugin object
-	var plugin = document.getElementById("zincPlugin");
-	/* create a download manager for reading input files */
-	var downloadManager = plugin.createDownloadManager();
-	/* add in URIs for downloadManager to read files from.
-		In this case files from the local directories. Each item stores
-		a block of memory for each file. */
-	var nodesItem = downloadManager.addURI("../resources/cube.exnode");
-	var elementsItem = downloadManager.addURI("../resources/cube.exelem");
-	/* add in a completion callback function once the download manager has 
-		 finish downloading and put the files into memory. In this case,
-		 the function returned by the getCubeDownloadCompleteFunction() will
-		 be called once download is finished. We wrap the callback function this
-		 way to provide scope to the arguments of the callback function.
-		 */
-	downloadManager.addCompletionCallback(
-		getCubeDownloadCompleteFunction(plugin, nodesItem, elementsItem));
-}</pre>
-	<p>In the following code sample, we define a function which returns the callback function used as the completion callback in the above code. This approach is used to preserve the scope of the arguments to the function.</p>
-	<p>FIXME: is this a good enough explanation of why things are done this way? does it matter?</p>
-<pre class="brush: js; html-script: false;">function getCubeDownloadCompleteFunction(pluginIn, nodesItemIn, elementsItemIn) {
-	console.log("getting the cube download complete callback function.");
-	var zincPlugin = pluginIn;
-	var nodesItem = nodesItemIn;
-	var elementsItem = elementsItemIn;
-
-	// this is the actual function that will be called upon completion of the downloads
-	return function() {
-		// get a handle to the default root region
-		var rootRegion = zincPlugin.context.getDefaultRegion();
-		// create a stream information object which will be used to define the data to read 
-		var streamInformation = rootRegion.createStreamInformation();
-		// and add the node and element items to the stream information
-		streamInformation.createResourceDownloadItem(nodesItem);
-		streamInformation.createResourceDownloadItem(elementsItem);
-		// Now we can load the mesh from the memory stream.
-		rootRegion.read(streamInformation);
-		
-		// if successful we should now be able to get the cube region just loaded.
-		var cubeRegion = rootRegion.findSubregionAtPath("cube");
-		if (cubeRegion) {
-			alert("The cube region successfully loaded with");
-			// FIXME: is there a better way to check for success?
-		} else {
-			alert("Something went horribly wrong loading the cube region?");
-		}
-	}
+<pre class="brush: js; html-script: false;">
+if (cubeRegion) {
+	// FIXME: is there a better way to check for success?
+	console.log("found the cube region");
+	// do some basic set-up of the scene viewer. 
+	var sceneViewer = zincPlugin.sceneViewer;
+	sceneViewer.setBackgroundColourRGB(1.0, 1.0, 1.0);
+	sceneViewer.antialiasMode = 4;
+	// Now we get a handle to the default graphics module for this zinc context 
+	var graphicsModule = zincPlugin.context.getDefaultGraphicsModule();
+	// and the rendition object for the cube's region 
+	var cubeRendition = graphicsModule.getRendition(cubeRegion);
+	// and define standard materials for the graphics module 
+	graphicsModule.defineStandardMaterials();
+	// Now we are able to layout the scene we want to view in the scene viewer
+	cubeRendition.beginChange(); // FIXME: cache changes to improve performance?
+	// API for the rendition object is still lacking, so we make use of the type-specific
+	// execute command method.
+	cubeRendition.executeCommand("general clear default_coordinate coordinates");
+	cubeRendition.executeCommand("cylinders constant_radius 0.05 material green");
+	cubeRendition.executeCommand("node glyph sphere size '0.15*0.15*0.15' material blue");
+	// finished making changes to the rendition, so end the caching and execute the changes.
+	cubeRendition.endChange();
+	// reset the scene to ensure all visible graphics are shown.
+	sceneViewer.viewAll();
+} else {
+	alert("Something went horribly wrong loading the cube region?");
 }</pre>
 								<p>Code samples are great but we want to show them that the code example actually works, so that's where the view demo button comes in. Note, it's ok to have a few code samples strung together that lead up to a single demo.</p>
 								<a class="demoBtn demo" href="demo/demo.html">View Demo</a>
 
 								<p>Explain to the user what the above code does when run and why it does it. While your demo should be well documented it's nice to be able to read the author's view of what the demo does. For example, this code sample has this description after it:</p>
 								<h3>What else to show?</h3>
+								<p>Want to keep this focused on simple introduction to graphics, should be linking to the API documentation (and examples?) to show the full range of graphics that can be done with the rendition object.
 								<ul>
-									<li>other callback methods?</li>
-									<li>better way to check that things work?</li>
-									<li>talk about any restrictions on where the data can come from?</li>
-									<li>multiple download managers?</li>
+									<li>Check what rendition API does exist and use it if possible</li>
 								</ul>
 							<h3>Conclusion</h3>
-							<p>Now you know how to download and load files into the zinc plugin...</p>
+							<p>Now you know how to draw something, yay!</p>
 						</div>
 						<div class="sidebar unit size1of3">
 							<div class="container">
