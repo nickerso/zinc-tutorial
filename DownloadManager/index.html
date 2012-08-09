@@ -78,7 +78,8 @@
 	downloadManager.addCompletionCallback(
 		getCubeDownloadCompleteFunction(plugin, nodesItem, elementsItem));
 }</pre>
-	<p>In the following code sample, we define a function which returns the callback function used as the completion callback in the sample above. This approach is used to preserve the scope of the arguments to the function.</p>
+	<p>In the following code sample, we define a function which returns the callback function used as the completion callback in the above code. This approach is used to preserve the scope of the arguments to the function.</p>
+	<p>FIXME: is this a good enough explanation of why things are done this way? does it matter?</p>
 <pre class="brush: js; html-script: false;">function getCubeDownloadCompleteFunction(pluginIn, nodesItemIn, elementsItemIn) {
 	console.log("getting the cube download complete callback function.");
 	var zincPlugin = pluginIn;
@@ -115,10 +116,11 @@
 								<ul>
 									<li>other callback methods?</li>
 									<li>better way to check that things work?</li>
-									<li>talk about any restirctions on where the data can come from?</li>
+									<li>talk about any restrictions on where the data can come from?</li>
+									<li>multiple download managers?</li>
 								</ul>
 							<h3>Conclusion</h3>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis condimentum lectus ac gravida. Nullam vulputate mauris sed augue dictum sed scelerisque nulla scelerisque. Sed lectus leo, auctor quis placerat nec, consectetur id est. Maecenas rhoncus magna non eros blandit euismod. Aliquam leo augue, sollicitudin nec mollis posuere, egestas vel sem. Nam accumsan posuere metus ut lacinia.</p>
+							<p>Now you know how to download and load files into the zinc plugin...</p>
 						</div>
 						<div class="sidebar unit size1of3">
 							<div class="container">
