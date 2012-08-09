@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Demo: Download Manager</title>
+		<link rel="stylesheet" href="style.css" media="screen">
+		<link rel="stylesheet" href="http://dojotoolkit.org/documentation/tutorials/1.7/resources/style/demo.css" media="screen">
+		<script type="text/javascript">
+			function zincPluginReady() {
+            	// the zinc plugin is ready, so we can start using it.
+                console.log("The zinc plugin is now ready to go!");
+				// grab a handle to the plugin object
+        		var plugin = document.getElementById("zincPlugin");
+        		/* create a download manager for reading input files */
+        		var downloadManager = plugin.createDownloadManager();
+        		/* add in URIs for downloadManager to read files from.
+        			In this case files from the local directories. Each item stores
+        			a block of memory for each file. */
+        		var nodesItem = downloadManager.addURI("../resources/cube.exnode");
+        		var elementsItem = downloadManager.addURI("../resources/cube.exelem");
+        		/* add in a completion callback function once the download manager has 
+        			 finish downloading and put the files into memory. In this case,
+        			 the function returned by the getCubeDownloadCompleteFunction() will
+        			 be called once download is finished. We wrap the callback function this
+        			 way to provide scope to the arguments of the callback function.
+        			 */
+        		downloadManager.addCompletionCallback(
+        			getCubeDownloadCompleteFunction(plugin, nodesItem, elementsItem));
+            }
+			/* Use a wrapper to preserve the arguments until the callback is made,
+			most of the function calls here are similar to this. */
+			function getCubeDownloadCompleteFunction(pluginIn, nodesItemIn, elementsItemIn) {
+				console.log("getting the cube download complete callback function.");
+				var zincPlugin = pluginIn;
+				var nodesItem = nodesItemIn;
+				var elementsItem = elementsItemIn;
+
+				// this is the actual function that will be called upon completion of the downloads
+				return function() {
+					// get a handle to the default root region
+					var rootRegion = zincPlugin.context.getDefaultRegion();
+					// create a stream information object which will be used to define the data to read 
+					var streamInformation = rootRegion.createStreamInformation();
+					// and add the node and element items to the stream information
+					streamInformation.createResourceDownloadItem(nodesItem);
+					streamInformation.createResourceDownloadItem(elementsItem);
+					// Now we can load the mesh from the memory stream.
+					rootRegion.read(streamInformation);
+					
+					// if successful we should now be able to get the cube region just loaded.
+					var cubeRegion = rootRegion.findSubregionAtPath("cube");
+					if (cubeRegion) {
+						alert("The cube region successfully loaded with");
+						// FIXME: is there a better way to check for success?
+					} else {
+						alert("Something went horribly wrong loading the cube region?");
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Demo: Download Manager</h1>
+		<object id="zincPlugin"  type="application/x-zinc-plugin" style="width: 250px; height: 300px;" onzincready="zincPluginReady()"></object>
+	</body>
+</html>
